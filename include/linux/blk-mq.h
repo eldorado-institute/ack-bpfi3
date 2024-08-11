@@ -192,9 +192,8 @@ struct request {
 	rq_end_io_fn *end_io;
 	void *end_io_data;
 
-	ANDROID_OEM_DATA(1);
-
-	ANDROID_KABI_RESERVE(1);
+	/* XXX: GKI vendor data*/
+	int request_debug_flags;
 };
 
 static inline enum req_op req_op(const struct request *req)

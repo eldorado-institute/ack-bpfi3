@@ -8,6 +8,7 @@
 
 #include <linux/const.h>
 #include <linux/cache.h>
+#include <linux/prctl.h>
 
 #include <vdso/processor.h>
 
@@ -120,6 +121,7 @@ struct thread_struct {
 	u32 riscv_v_flags;
 	u32 vstate_ctrl;
 	struct __riscv_v_ext_state vstate;
+	unsigned long align_ctl;
 	struct __riscv_v_ext_state kernel_vstate;
 };
 
@@ -133,6 +135,7 @@ static inline void arch_thread_struct_whitelist(unsigned long *offset,
 
 #define INIT_THREAD {					\
 	.sp = sizeof(init_stack) + (long)&init_stack,	\
+	.align_ctl = PR_UNALIGN_NOPRINT,		\
 }
 
 #define task_pt_regs(tsk)						\
@@ -162,6 +165,7 @@ int riscv_of_parent_hartid(struct device_node *node, unsigned long *hartid);
 
 extern void riscv_fill_hwcap(void);
 extern int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src);
+extern struct cpumask ai_core_mask_get(void);
 
 extern unsigned long signal_minsigstksz __ro_after_init;
 
@@ -172,6 +176,12 @@ extern unsigned long signal_minsigstksz __ro_after_init;
 extern long riscv_v_vstate_ctrl_set_current(unsigned long arg);
 extern long riscv_v_vstate_ctrl_get_current(void);
 #endif /* CONFIG_RISCV_ISA_V */
+
+extern int get_unalign_ctl(struct task_struct *tsk, unsigned long addr);
+extern int set_unalign_ctl(struct task_struct *tsk, unsigned int val);
+
+#define GET_UNALIGN_CTL(tsk, addr)	get_unalign_ctl((tsk), (addr))
+#define SET_UNALIGN_CTL(tsk, val)	set_unalign_ctl((tsk), (val))
 
 #endif /* __ASSEMBLY__ */
 

@@ -379,10 +379,15 @@ static int dw_pcie_msi_host_init(struct dw_pcie_rp *pp)
 	 * done by allocating from the artificially limited DMA-coherent
 	 * memory.
 	 */
-	ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
-	if (!ret)
-		msi_vaddr = dmam_alloc_coherent(dev, sizeof(u64), &pp->msi_data,
-						GFP_KERNEL);
+	if (IS_ENABLED(CONFIG_SOC_SPACEMIT_K1PRO))
+		ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(40));
+	else
+		ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
+	if (ret)
+		dev_warn(dev, "Failed to set DMA mask to 32-bit. Devices with only 32-bit MSI support may not work properly\n");
+
+	msi_vaddr = dmam_alloc_coherent(dev, sizeof(u64), &pp->msi_data,
+					GFP_KERNEL);
 
 	if (!msi_vaddr) {
 		dev_warn(dev, "Failed to allocate 32-bit MSI address\n");
