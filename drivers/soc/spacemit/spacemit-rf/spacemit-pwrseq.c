@@ -32,6 +32,7 @@ struct spacemit_pwrseq *spacemit_get_pwrseq_from_dev(struct device *dev)
 		return platform_get_drvdata(to_platform_device(dev->parent));
 	return NULL;
 }
+EXPORT_SYMBOL_GPL(spacemit_get_pwrseq_from_dev);
 
 static void spacemit_set_gpios_value(struct spacemit_pwrseq *pwrseq,
 						int value)
@@ -181,6 +182,7 @@ void spacemit_power_on(struct spacemit_pwrseq *pwrseq,
 	}
 	mutex_unlock(&pwrseq->pwrseq_mutex);
 }
+EXPORT_SYMBOL_GPL(spacemit_power_on);
 
 static int spacemit_pwrseq_probe(struct platform_device *pdev)
 {
