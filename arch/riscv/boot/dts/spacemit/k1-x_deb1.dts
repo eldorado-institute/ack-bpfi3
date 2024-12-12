@@ -908,7 +908,7 @@
 };
 
 &imggpu {
-	status = "okay";
+	status = "disabled";
 };
 
 &qspi {
